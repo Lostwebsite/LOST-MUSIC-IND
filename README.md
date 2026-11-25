@@ -1,2 +1,10 @@
-# LOST-MUSIC-IND
-LOST Music – A modern music streaming website with YouTube music search, custom playlists, liked songs, and a smart music player.
+# Lost Music
+
+Crystal-clear music player (YouTube IFrame + Data API).
+
+Files: index.html, manifest.webmanifest, sw.js, icon-192.png, icon-512.png
+
+Setup: upload all files to the repo root, then Settings > Pages > Branch main / root.
+In index.html, put your own YouTube Data API key in API_KEY and restrict it to https://YOURNAME.github.io/*
+
+Created by Ankit Kumar
