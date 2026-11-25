@@ -1,0 +1,23 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>Lost admin</title>
+<style>body{background:#000;color:#eee;font:15px system-ui,sans-serif;margin:0;padding:20px}input,button{font:inherit;padding:11px 14px;border-radius:12px;border:1px solid #333;background:#111;color:#fff;margin:4px 0;width:100%;box-sizing:border-box}button{cursor:pointer}table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}td,th{border-bottom:1px solid #222;padding:8px 4px;text-align:left;word-break:break-all}small,.m{color:#888}code{color:#9bd4ff;word-break:break-all}</style></head>
+<body><h2>Lost · admin</h2><div id="app"></div>
+<script src="firebase-config.js"></script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {getFirestore,collection,getDocs} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const C=window.FIREBASE_CONFIG||{},app=document.getElementById("app");
+const h=(t,p={},...k)=>{const e=document.createElement(t);for(const[a,v]of Object.entries(p)){if(a==="text")e.textContent=v;else if(a.startsWith("on"))e[a]=v;else e.setAttribute(a,v)}k.flat().forEach(c=>c!=null&&e.append(c.nodeType?c:document.createTextNode(c)));return e};
+if(!C.apiKey||/PASTE/i.test(C.apiKey)){app.append(h("p",{class:"m",text:"Add your Firebase settings in firebase-config.js first."}))}
+else{const auth=getAuth(initializeApp(C)),db=getFirestore();
+ onAuthStateChanged(auth,async u=>{app.innerHTML="";
+  if(!u){const em=h("input",{type:"email",placeholder:"Admin email"}),pw=h("input",{type:"password",placeholder:"Password"});
+   app.append(em,pw,h("button",{text:"Sign in",onclick:async()=>{try{await signInWithEmailAndPassword(auth,em.value.trim(),pw.value)}catch(e){alert(e.message)}}}));return}
+  app.append(h("p",{class:"m"},"Signed in as "+u.email+" · your UID: ",h("code",{text:u.uid})),h("button",{text:"Sign out",onclick:()=>signOut(auth)}));
+  try{const[pv,us]=await Promise.all([getDocs(collection(db,"private")),getDocs(collection(db,"users"))]);const names={};us.forEach(d=>names[d.id]=d.data().username);
+   const rows=[];pv.forEach(d=>{const x=d.data();rows.push([names[d.id]||"-",x.name||"-",x.email||"-",x.phone||"-",x.createdAt&&x.createdAt.toDate?x.createdAt.toDate().toLocaleString():"-"])});
+   app.append(h("p",{class:"m",text:rows.length+" people"}),h("button",{text:"Download CSV",onclick:()=>{const c=[["username","name","email","phone","joined"],...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n"),a=h("a",{href:URL.createObjectURL(new Blob([c],{type:"text/csv"})),download:"lost-users.csv"});a.click()}}));
+   const t=h("table",{},h("tr",{},["Username","Name","Email","Phone","Joined"].map(x=>h("th",{text:x}))),rows.map(r=>h("tr",{},r.map(v=>h("td",{text:v})))));app.append(t)}
+  catch(e){app.append(h("p",{class:"m",text:"Not allowed yet. Copy your UID above, put it in the Firestore rules as ADMIN_UID, and publish the rules (see README)."}))}})}
+</script></body></html>
