@@ -1,4 +1,5 @@
-window.FIREBASE_CONFIG = {
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
   apiKey: "AIzaSyCKJRv7yneS-t4GlbugX_ejNm99EYogZCQ",
   authDomain: "lost-music-b64f3.firebaseapp.com",
   projectId: "lost-music-b64f3",
